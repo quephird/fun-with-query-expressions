@@ -9,7 +9,7 @@ Well... it turns out you can... fairly easily with F# and type providers.
 
 ### Selecting an example schema
 
-I used the Suppliers/Parts schema from C.J.Date's famous textbook: http://c2.com/cgi/wiki?SupplierPartsDatabase I then decided to experiment putting one set of data in an Excel file, another in code as an array of F# records, and the third in a proper database table.
+I used the well-known Suppliers/Parts schema used in many of C.J. Date's textbooks; you can read more it here: http://c2.com/cgi/wiki?SupplierPartsDatabase I then decided to experiment putting one set of data in an Excel file, another in code as an array of F# records, and the third in a proper database table.
 
 ### Create an Excel spreadsheet and reference it as a datasource
 
@@ -25,9 +25,9 @@ To install it, I ran the following:
 nuget install excelprovider
 ```
 
-(When I did this, it installed the package to my home directory and not the project directory I was already in; I'm not absolutely sure this is the proper way to install libraries or if installing them globally is even recommended.)
+(When I did this, it installed the package to my home directory and not the project directory I was already in. I'm more used to dependency management tools for languages like Clojure, Haskell, and Ruby where you can install libraries for a particular project or globally and easily use them in a REPL. I'm not absolutely sure this is the proper way to manage libraries for F# projects nor if installing them globally is even recommended.)
 
-Nonetheless, here, I reference the dependency, open the package, declare a type provider for the file, and then instantiate a class so I can actually read from it:
+Nonetheless, here I reference the dependency, open the package, declare a type provider for the file, and then instantiate a class so I can actually read from it. (As far as I know, you must use absolute paths to DLLs in order to use them in a REPL. If someone knows a better way, I'd love to know.)
 
 ```
 #r "/path/to/install/folder/lib/ExcelProvider.dll"
