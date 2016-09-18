@@ -19,13 +19,13 @@ I created a simple spreadsheet using Numbers on OS X, populated it with the Supp
 
 So... the next thing I needed to do was look for a type provider for Excel... and I came across [ExcelProvider](http://fsprojects.github.io/ExcelProvider/), which is ok to use on the Mono platform. (There is another package from Microsoft, which is nicely explained [here](https://blogs.msdn.microsoft.com/jackhu/2011/04/19/fsharp-excel-reading-and-writing-from-and-to-excel/), but you need to use Windows.)
 
-To install it, run the following:
+To install it, I ran the following:
 
 ```
 nuget install excelprovider
 ```
 
-When I did this, it installed the package to my home directory; I'm not absolutely sure this is the proper way to install global libraries or if that is even recommended.
+(When I did this, it installed the package to my home directory and not the project directory I was already in; I'm not absolutely sure this is the proper way to install libraries or if installing them globally is even recommended.)
 
 Nonetheless, here, I reference the dependency, open the package, declare a type provider for the file, and then instantiate a class so I can actually read from it:
 
@@ -66,3 +66,64 @@ let parts =
 Now I can write queries against it too:
 
 ![](./images/parts_query.png)
+
+### Create a Postgres table as a third datasource
+
+After a short time spelunking, I found a type provider that supports multiple database implementations [here](http://fsprojects.github.io/SQLProvider/index.html).
+
+I also needed to find a database connectivity driver for Postgres, and found `npgsql` [here](http://www.npgsql.org/).
+
+I installed them both:
+
+```
+nuget install sqlprovider
+nuget install npgsql
+```
+
+OK... so the next thing to do was create a table and load it with data, this time those for the SupplierParts relation:
+
+```
+create table supplier_parts
+       (supplier_id   varchar,
+        part_id       varchar,
+        quantity      integer);
+
+insert into supplier_parts
+values ('S1', 'P1', 300),
+       ('S1', 'P2', 200),
+       ('S1', 'P3', 400),
+       ('S1', 'P4', 200),
+       ('S1', 'P5', 100),
+       ('S1', 'P6', 100),
+       ('S2', 'P1', 200),
+       ('S2', 'P2', 300),
+       ('S3', 'P2', 200),
+       ('S4', 'P2', 200),
+       ('S4', 'P4', 300),
+       ('S4', 'P5', 400);
+```
+
+Next, I needed to do something similar to what I did above for the Excel file, namely reference the library and create the type provider.
+
+```
+#r "/path/to/install/folder/lib/FSharp.Data.SQLProvider.dll"
+
+let [<Literal>] connString = "Server=localhost;Database=your_db;User Id=your_user_id;Password=your_password"
+
+open FSharp.Data.Sql
+
+type sql = SqlDataProvider
+             <Common.DatabaseProviderTypes.POSTGRESQL,
+             connString,
+             ResolutionPath = @"/path/to/install/folder/lib/net451">
+
+let ctx = sql.GetDataContext()
+
+let supplierParts = ctx.Public.SupplierParts
+```
+
+Let's see if this works first:
+
+![](./images/supplier_parts_query.png)
+
+So... I have an Excel file and two arrays... and I want to know, say... hmmm... give me the suppliers who have parts such that the supplier city is different from the part city and the quantity available through the supplier is greater than or equal to 300
