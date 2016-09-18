@@ -137,7 +137,7 @@ let supplierParts = ctx.Public.SupplierParts
 Let's see if this query works first:
 
 ```
-query { for sp in ctx.Public.SupplierParts do
+query { for sp in supplierParts do
         select (sp.SupplierId, sp.PartId, sp.Quantity) }
 ```
 
