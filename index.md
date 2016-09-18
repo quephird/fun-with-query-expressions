@@ -23,10 +23,9 @@ To install it, run the following:
 
 ```
 nuget install excelprovider
-
 ```
 
-When I did this, it installed the package to my home directory; I'm not absolutely sure this is the proper way to install global libraries or if that is even possible or recommended.
+When I did this, it installed the package to my home directory; I'm not absolutely sure this is the proper way to install global libraries or if that is even recommended.
 
 Nonetheless, here, I reference the dependency, open the package, declare a type provider for the file, and then instantiate a class so I can actually read from it:
 
@@ -35,7 +34,7 @@ Nonetheless, here, I reference the dependency, open the package, declare a type 
 
 open FSharp.ExcelProvider
 
-type SuppliersExcelFileType = ExcelFile<"./Suppliers.xls">
+type SuppliersExcelFileType = ExcelFile<"./data/Suppliers.xls">
 
 let suppliers = (new SuppliersExcelFileType()).Data
 ```
