@@ -27,7 +27,7 @@ nuget install excelprovider
 
 (When I did this, it installed the package to my home directory and not the project directory I was already in. I'm more used to dependency management tools for languages like Clojure, Haskell, and Ruby where you can install libraries for a particular project or globally and easily use them in a REPL. I'm not absolutely sure this is the proper way to manage libraries for F# projects nor if installing them globally is even recommended.)
 
-Nonetheless, here I reference the dependency, open the package, declare a type provider for the file, and then instantiate a class so I can actually read from it. (As far as I know, you must use absolute paths to DLLs in order to use them in a REPL. If someone knows a better way, I'd love to know.)
+Nonetheless, here I reference the dependency, open the package, declare a type provider for the file, and then instantiate a class so I can actually read from it.
 
 ```
 #r "/path/to/install/folder/lib/ExcelProvider.dll"
@@ -39,7 +39,14 @@ type SuppliersExcelFileType = ExcelFile<"./data/Suppliers.xls">
 let suppliers = (new SuppliersExcelFileType()).Data
 ```
 
+(As far as I know, you must use absolute paths to DLLs in order to use them in a REPL. If someone knows a better way, I'd love to know.)
+
 Next, I can actually write queries against the "loaded" file:
+
+```
+query { for s in suppliers do
+        select (s.Id, s.City) }
+```
 
 ![](./images/suppliers_query.png)
 
@@ -64,6 +71,12 @@ let parts =
 ```
 
 Now I can write queries against it too:
+
+```
+query { for p in parts do
+        where (p.Color = "Red")
+        select (p.Id, p.Name) }
+```
 
 ![](./images/parts_query.png)
 
@@ -108,22 +121,38 @@ Next, I needed to do something similar to what I did above for the Excel file, n
 ```
 #r "/path/to/install/folder/lib/FSharp.Data.SQLProvider.dll"
 
-let [<Literal>] connString = "Server=localhost;Database=your_db;User Id=your_user_id;Password=your_password"
-
 open FSharp.Data.Sql
 
-type sql = SqlDataProvider
-             <Common.DatabaseProviderTypes.POSTGRESQL,
-             connString,
-             ResolutionPath = @"/path/to/install/folder/lib/net451">
+let [<Literal>] connString = "Server=localhost;Database=your_db;User Id=your_user_id;Password=your_password"
+
+type sql = SqlDataProvider<Common.DatabaseProviderTypes.POSTGRESQL,
+                           connString,
+                           ResolutionPath = @"/path/to/install/folder/lib/net451">
 
 let ctx = sql.GetDataContext()
 
 let supplierParts = ctx.Public.SupplierParts
 ```
 
-Let's see if this works first:
+Let's see if this query works first:
+
+```
+query { for sp in ctx.Public.SupplierParts do
+        select (sp.SupplierId, sp.PartId, sp.Quantity) }
+```
 
 ![](./images/supplier_parts_query.png)
 
-So... I have an Excel file and two arrays... and I want to know, say... hmmm... give me the suppliers who have parts such that the supplier city is different from the part city and the quantity available through the supplier is greater than or equal to 300
+So... I have an Excel file an array and a database table... and I want to know, say... hmmm... give me the suppliers who have parts such that the supplier city is different from the part city and the quantity available through the supplier is greater than or equal to 300. Sound impossible? Here's the query:
+
+```
+query { for s in suppliers do
+        join sp in supplierParts on (s.Id = sp.SupplierId)
+        join p in parts on (sp.PartId = p.Id)
+        where (s.City <> p.City && sp.Quantity >= 300)
+        select (s.Id, s.Name, p.Id, p.Name, sp.Quantity) };;
+```
+
+... and:
+
+![](./images/grand_finale_query.png)
