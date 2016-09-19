@@ -169,4 +169,4 @@ I was amazed at how easy the querying part of this experiment was. Some of the h
 There are a few things that I do wonder about:
 
 * How does this sort of thing scale? How large can the sets of data be for these queries to be performant and/or not consume too much memory?
-* Is this otherwise something to seriously consider doing in a business context? I could definitely imagine it being useful to somehow enable users to be able to select from arbitrary source types (and do so safely somehow).
+* Is this otherwise something to seriously consider doing in a business context? I could definitely imagine it being useful to somehow enable users to be able to select from arbitrary source types (and do so safely).
