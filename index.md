@@ -36,7 +36,9 @@ open FSharp.ExcelProvider
 
 type SuppliersExcelFileType = ExcelFile<"./data/Suppliers.xls">
 
-let suppliers = (new SuppliersExcelFileType()).Data
+let file = new SuppliersExcelFileType()
+
+let suppliers = file.Data
 ```
 
 (As far as I know, you must use absolute paths to DLLs in order to use them in a REPL. If someone knows a better way, I'd love to know.)
@@ -156,3 +158,15 @@ query { for s in suppliers do
 ... and:
 
 ![](./images/grand_finale_query.png)
+
+### Summary
+
+I was amazed at how easy the querying part of this experiment was. Some of the harder things were:
+
+* finding libraries that worked on the Mono platform and had no dependencies on Windows binaries
+* figuring out where NuGet installed libraries and then how to reference them from within the REPL
+
+There are a few things that I do wonder about:
+
+* How does this sort of thing scale? How large can the sets of data be for these queries to be performant and/or not consume too much memory?
+* Is this otherwise something to seriously consider doing in a business context? I could definitely imagine it being useful to somehow enable users to be able to select from arbitrary source types (and do so safely somehow).
