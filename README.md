@@ -170,3 +170,10 @@ There are a few things that I do wonder about:
 
 * How does this sort of thing scale? How large can the sets of data be for these queries to be performant and/or not consume too much memory?
 * Is this otherwise something to seriously consider doing in a business context? I could definitely imagine it being useful to somehow enable users to be able to select from arbitrary source types (and do so safely).
+
+### Resources
+
+* The listing for an excellent introductory book on F#: https://www.nostarch.com/fsharp
+* GitHub page for the ExcelProvider project: http://fsprojects.github.io/ExcelProvider/
+* GitHub page for the SQLProvider project: http://fsprojects.github.io/SQLProvider/
+* A _very_ thorough article on query expressions and how their syntax compare with SQL. https://docs.microsoft.com/en-us/dotnet/articles/fsharp/language-reference/query-expressions
